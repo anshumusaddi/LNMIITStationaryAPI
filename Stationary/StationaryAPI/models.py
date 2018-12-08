@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Item(models.Model):
@@ -22,7 +23,7 @@ class Vendor(models.Model):
 class Dealer(models.Model):
     vendor = models.ForeignKey(Vendor,on_delete=models.CASCADE)
     item = models.ForeignKey(Item,on_delete=models.CASCADE)
-    price = models.DecimalField()
+    price = models.FloatField()
 
 class CurrentItems(models.Model):
     faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE)
