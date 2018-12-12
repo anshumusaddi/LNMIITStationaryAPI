@@ -25,7 +25,7 @@ SECRET_KEY = 'c(n1)pxp16_ewv+27*t2zaegs4gyhk(aaihsf#9qz11@ilbhqm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','StationeryAPI.pythonanywhere.com']
 
 
 # Application definition

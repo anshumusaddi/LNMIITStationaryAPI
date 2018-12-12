@@ -59,6 +59,7 @@ urlpatterns = [
     path('orderitems/OID=<int:OID>/',views.OrderItemsOIDView.as_view(),name = 'Order Items Single'),
     path('orderitems/Insert/',views.OrderItemsInsertView.as_view(),name = 'Order Items Insert'),
     path('orderitems/<pk>/',views.OrderItemsEditView.as_view(),name = 'Order Items Edit'),
+    # Complete Above This
     path('supplyorder/',views.SupplyOrderListView.as_view(),name = 'Supply Order'),
     path('supplyorderitems/',views.SupplyOrderItemsListView.as_view(),name = 'Supply Order Items'),
 ]
