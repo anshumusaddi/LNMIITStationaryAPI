@@ -1,68 +1,77 @@
 from rest_framework import serializers
 from .models import Item,CurrentItems,Dealer,Faculty,Vendor,OrderItems,Order,SupplyOrderItems,SupplyOrder
 
-class ItemSerializer(serializer.ModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ("PID","Name","Perishable","Qty","OnHold","MinQty","OrderReq")
 
-class FacultySerializerWOI(serializers.ModelSerializer):
+class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
         fields = ("FID", "Name","Email")
 
-class CurrItSerializer(serializer.ModelSerializer):
+class CurrItSerializer(serializers.ModelSerializer):
+    fac = FacultySerializer()
     item = ItemSerializer()
     class Meta:
-        model = CurrIt
-        fields = ("item","Qty")
+        model = CurrentItems
+        fields = ("id","fac","item","Qty")
 
-class FacultySerializerWI(serializers.ModelSerializer):
-    user = UserSerializer()
-    CurrIt = CurrItSerializer(many=True)
+class CurrItEditSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Faculty
-        fields = ("FID", "Name","Email","CurrIt")
+        model = CurrentItems
+        fields = ("id","fac","item","Qty")
 
-class VendorSerializerWOI(serializers.ModelSerializer):
+class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
-        fields = ("VID","name")
+        fields = ("VID","Email","Name")
 
 class DealerSerializer(serializers.ModelSerializer):
+    ven = VendorSerializer()
     item = ItemSerializer()
     class Meta:
         model = Dealer
-        fields = ("item","price")
+        fields = ("id","ven","item","price")
 
-class VendorSerializerWI(serializers.ModelSerializer):
-    DealsIn = DealerSerializer(many=True)
+class DealerEditSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Vendor
-        fields = ("VID","name","DealsIn")
-
-class OrderItemsSerializer(serializers.ModelSerializer):
-    item = ItemSerializer()
-    class Meta:
-        model = OrderItems
-        fields = ("item","Qty")
+        model = Dealer
+        fields = ("id","ven","item","price")
 
 class OrderSerializer(serializers.ModelSerializer):
-    faculty = facultySerializerWOI()
-    items = OrderItemSerializer(many=True)
+    faculty = FacultySerializer()
     class Meta:
         model = Order
         fields = ("OrderID","faculty","items","Approved","Delivered","OrderDate","DeliveryDate")
 
+class OrderEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("OrderID","faculty","items","Approved","Delivered","OrderDate","DeliveryDate")
+
+class OrderItemsSerializer(serializers.ModelSerializer):
+    ord = OrderSerializer()
+    item = ItemSerializer()
+    class Meta:
+        model = OrderItems
+        fields = ("id","ord","item","Qty")
+
+class OrderItemsEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItems
+        fields = ("id","ord","item","Qty")
+
+class SupplyOrderSerializer(serializers.ModelSerializer):
+    vendor = VendorSerializer()
+    class Meta:
+        model = SupplyOrder
+        fields = ("OrderID","vendor","items","Paid","Delivered","OrderDate","DeliveryDate")
+
 class SupplyOrderItemsSerializer(serializers.ModelSerializer):
+    sord = SupplyOrderSerializer()
     item = ItemSerializer()
     class Meta:
         model = SupplyOrderItems
-        fields = ("item","Qty")
-
-class SupplyOrderSerializer(serializers.ModelSerializer):
-    vendor = VendorSerializerWOI()
-    items = SupplyOrderItemsSerializer(many=True)
-    class Meta:
-        model = SupplyOrder
-        ields = ("OrderID","vendor","items","Paid","Delivered","OrderDate","DeliveryDate")
+        fields = ("sord","item","Qty")

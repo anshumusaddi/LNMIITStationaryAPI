@@ -21,16 +21,20 @@ class Faculty(models.Model):
         return str(self.FID) + ' : ' + str(self.Name)
 
 class CurrentItems(models.Model):
-    fac = models.ForeignKey(Faculty,on_delete=models.CASCADE)
-    item = models.ForeignKey(Item,on_delete=models.CASCADE)
+    fac = models.ForeignKey(Faculty,related_name='facn',on_delete=models.CASCADE)
+    item = models.ForeignKey(Item,related_name='itemn',on_delete=models.CASCADE)
     Qty = models.PositiveIntegerField()
     # only non-perishable items should be there + last odered items if possible
     def __str__(self):
         return str(self.fac) + ' : ' + str(self.item)
 
+    class Meta:
+        unique_together = ('fac', 'item',)
+
 class Vendor(models.Model):
     VID = models.CharField(max_length=100,primary_key=True)
     Name = models.CharField(max_length = 100)
+    Email = models.EmailField()
     DealsIn = models.ManyToManyField(Item,through = 'Dealer',through_fields = ('ven','item'),related_name='deal')
     def __str__(self):
         return str(self.VID) + ' : ' + str(self.Name)
@@ -41,6 +45,9 @@ class Dealer(models.Model):
     price = models.FloatField()
     def __str__(self):
         return str(self.ven) + ' : ' + str(self.item)
+
+    class Meta:
+        unique_together = ('ven', 'item',)
 
 class Order(models.Model):
     OrderID = models.BigAutoField(primary_key=True)
@@ -60,6 +67,9 @@ class OrderItems(models.Model):
     def __str__(self):
         return str(self.ord) + " : " + str(self.item)
 
+    class Meta:
+        unique_together = ('ord', 'item',)
+
 class SupplyOrder(models.Model):
     OrderID = models.BigAutoField(primary_key=True)
     vendor = models.ForeignKey(Vendor,related_name='vend',on_delete=models.CASCADE)
@@ -76,4 +86,7 @@ class SupplyOrderItems(models.Model):
     item = models.ForeignKey(Item,on_delete=models.CASCADE)
     Qty = models.PositiveIntegerField()
     def __str__(self):
-        return str(self.ord) + " : " + str(self.item)
+        return str(self.sord) + " : " + str(self.item)
+
+    class Meta:
+        unique_together = ('sord', 'item',)
